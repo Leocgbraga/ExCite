@@ -1,18 +1,34 @@
-document.getElementById('getCitations').addEventListener('click', () => {
-  // Send a message to the background script to get citations for the current tab.
-  chrome.runtime.sendMessage({ action: 'getCitations' }, (response) => {
-    console.log(response);
-  
-    const citationsDiv = document.getElementById('citations');
-    citationsDiv.innerHTML = ''; // clear the old citations
+window.onload = function() {
+    var getCitationsButton = document.getElementById('getCitations');
+    getCitationsButton.addEventListener('click', function() {
+        console.log('Button clicked in popup');
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {action: 'getCitations'}, function(response) {
+                console.log('Received response in popup:', response);
+            });
+        });
+    }, false);
+};
 
-    // For each citation, create a new paragraph and add it to the citations div
-    // For simplicity, we're assuming that `response` is an array of citation strings. 
-    // If it's not, you'll need to modify this to match the actual structure of `response`.
-    response.forEach(citation => {
-      const p = document.createElement('p');
-      p.textContent = citation;
-      citationsDiv.appendChild(p);
-    });
+
+
+  chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+      if (request.type === 'pubmedResults') {
+          console.log('Received message from background: ', request);
+          let citationData = request.data;
+          for (let category of ['summary', 'references']) {
+              let citations = citationData[category];
+              if (citations.length === 0) {
+                  document.getElementById(category + 'Citations').innerText = 'No citations found.';
+              } else {
+                  let citationElements = citations.map(citationId => {
+                      let el = document.createElement('li');
+                      el.innerText = 'PubMed ID: ' + citationId;
+                      return el;
+                  });
+                  document.getElementById(category + 'Citations').append(...citationElements);
+              }
+          }
+      }
   });
-});
+
