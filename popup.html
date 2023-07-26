@@ -1,25 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Get Citations</title>
-    <style>
-      body {
-        width: 300px;
-        font-family: Arial, sans-serif;
-      }
-      button {
-        height: 30px;
-        width: 100px;
-        margin: 10px;
-      }
-      #citations {
-        margin-top: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <button id="getCitations">Get Citations</button>
-    <div id="citations"></div>
-    <script src="popup.js"></script>
-  </body>
+    <head>
+        <title>YouTube Citation Extension</title>
+        <style>
+            body {
+                width: 300px;
+                height: 600px;
+                padding: 10px;
+            }
+
+            #loading {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="query-form">
+            <label for="query-input">Enter your query:</label>
+            <input type="text" id="query-input" name="query-input">
+            <button type="submit">Get Citations</button>
+        </form>
+        
+        <div id="loading">Loading...</div>
+        <div id="citations"></div>
+        <script src="popup.js"></script>
+    </body>
 </html>
